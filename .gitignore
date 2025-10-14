@@ -1,0 +1,14 @@
+# Node.js dependencies
+node_modules/
+
+# Installers and Archives
+*.exe
+*.zip
+
+# Test reports and artifacts
+results.jtl
+lighthouse-report.html
+
+# Common operating system files
+.DS_Store
+Thumbs.db
