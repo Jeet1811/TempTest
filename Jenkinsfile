@@ -1,0 +1,82 @@
+pipeline {
+    agent any
+
+    tools {
+        // Assumes you have a JDK named 'jdk17' configured in Jenkins Global Tool Configuration
+        // Go to Manage Jenkins -> Tools -> JDK Installations -> Add JDK
+        jdk 'jdk17' 
+    }
+
+    stages {
+        stage('1. Checkout Code') {
+            steps {
+                echo 'Checking out code from Git...'
+                git 'https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git' // <-- CHANGE THIS
+            }
+        }
+
+        stage('2. Install Dependencies') {
+            steps {
+                echo 'Installing Node.js dependencies...'
+                sh 'npm install'
+            }
+        }
+
+        stage('3. Start Application') {
+            steps {
+                echo 'Starting the web application in the background...'
+                // Start the app in the background and save its process ID (PID)
+                sh 'nohup node index.js & echo $! > .pid'
+                // Give the server a moment to start up
+                sleep 5 
+            }
+        }
+
+        stage('4. Run JMeter Load Test') {
+            steps {
+                echo 'Running JMeter performance test...'
+                // NOTE: Update the path to your JMeter installation
+                sh '/path/to/your/apache-jmeter-5.6.2/bin/jmeter.sh -n -t HomePageTest.jmx -l results.jtl'
+            }
+        }
+        
+        stage('5. Run Lighthouse Audit') {
+            steps {
+                echo 'Running Lighthouse audit...'
+                // Install Lighthouse CLI and run the audit
+                // The --chrome-flags are needed to run Chrome headlessly in a CI environment
+                sh 'npm install -g lighthouse'
+                sh 'lighthouse http://localhost:3000 --output="html" --output-path="./lighthouse-report.html" --chrome-flags="--headless --no-sandbox"'
+            }
+        }
+    }
+
+    post {
+        always {
+            stage('6. Stop Application & Publish Reports') {
+                steps {
+                    echo 'Stopping the web application...'
+                    // Kill the process using the saved PID
+                    sh 'kill $(cat .pid)'
+
+                    echo 'Archiving reports...'
+                    // 1. Publish JMeter Report
+                    perfReport sourceDataFiles: 'results.jtl', 
+                               errorFailedThreshold: 10,  // Fail build if >10% of requests are errors
+                               errorUnstableThreshold: 5, // Mark build as unstable if >5% of requests are errors
+                               compareBuildPrevious: true
+
+                    // 2. Publish Lighthouse Report
+                    publishHTML(target: [
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: '.',
+                        reportFiles: 'lighthouse-report.html',
+                        reportName: 'Lighthouse HTML Report'
+                    ])
+                }
+            }
+        }
+    }
+}
