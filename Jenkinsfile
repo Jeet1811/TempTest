@@ -11,7 +11,7 @@ pipeline {
         stage('1. Checkout Code') {
             steps {
                 echo 'Checking out code from Git...'
-                git 'https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git' // <-- CHANGE THIS
+                git 'https://github.com/DarshJodhani/web-performance-demo.git' // <-- CHANGE THIS
             }
         }
 
@@ -36,7 +36,7 @@ pipeline {
             steps {
                 echo 'Running JMeter performance test...'
                 // NOTE: Update the path to your JMeter installation
-                sh '/path/to/your/apache-jmeter-5.6.2/bin/jmeter.sh -n -t HomePageTest.jmx -l results.jtl'
+                sh 'G:\\WPO\\web-perf-project\\apache-jmeter-5.6.3\\bin\\jmeter.sh -n -t HomePageTest.jmx -l results.jtl'
             }
         }
         
@@ -78,5 +78,4 @@ pipeline {
         }
     }
 }
-
 }
