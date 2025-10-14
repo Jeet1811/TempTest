@@ -2,9 +2,8 @@ pipeline {
     agent any
 
     tools {
-        // This requires a JDK named 'jdk17' to be configured in
-        // Manage Jenkins -> Tools -> JDK Installations
-        jdk 'jdk17'
+    jdk 'jdk17'
+    nodejs 'nodejs18' // Add this line
     }
 
     stages {
@@ -71,3 +70,4 @@ pipeline {
         }
     }
 }
+
