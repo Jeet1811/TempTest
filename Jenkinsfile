@@ -52,31 +52,31 @@ pipeline {
     }
 
     post {
-        always {
-            stage('6. Stop Application & Publish Reports') {
-                steps {
-                    echo 'Stopping the web application...'
-                    // Kill the process using the saved PID
-                    sh 'kill $(cat .pid)'
+    always {
+        // The 'stage' wrapper has been removed.
+        steps {
+            echo 'Stopping the web application and publishing reports...'
+            
+            // Stop the application
+            sh 'kill $(cat .pid)'
 
-                    echo 'Archiving reports...'
-                    // 1. Publish JMeter Report
-                    perfReport sourceDataFiles: 'results.jtl', 
-                               errorFailedThreshold: 10,  // Fail build if >10% of requests are errors
-                               errorUnstableThreshold: 5, // Mark build as unstable if >5% of requests are errors
-                               compareBuildPrevious: true
+            // Publish JMeter Report
+            perfReport sourceDataFiles: 'results.jtl', 
+                       errorFailedThreshold: 10,
+                       errorUnstableThreshold: 5,
+                       compareBuildPrevious: true
 
-                    // 2. Publish Lighthouse Report
-                    publishHTML(target: [
-                        allowMissing: false,
-                        alwaysLinkToLastBuild: true,
-                        keepAll: true,
-                        reportDir: '.',
-                        reportFiles: 'lighthouse-report.html',
-                        reportName: 'Lighthouse HTML Report'
-                    ])
-                }
-            }
+            // Publish Lighthouse Report
+            publishHTML(target: [
+                allowMissing: false,
+                alwaysLinkToLastBuild: true,
+                keepAll: true,
+                reportDir: '.',
+                reportFiles: 'lighthouse-report.html',
+                reportName: 'Lighthouse HTML Report'
+            ])
         }
     }
+}
+
 }
