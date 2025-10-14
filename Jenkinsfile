@@ -5,7 +5,7 @@ pipeline {
         // Assumes you have a JDK named 'jdk17' configured in Jenkins
         // Go to Manage Jenkins -> Tools -> JDK Installations -> Add JDK
         jdk 'jdk17' 
-        node 'nodejs18'
+        nodejs 'nodejs18'
     }
 
     stages {
@@ -80,3 +80,4 @@ pipeline {
         }
     }
 }
+
