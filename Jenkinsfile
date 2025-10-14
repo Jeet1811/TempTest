@@ -34,7 +34,7 @@ pipeline {
             steps {
                 echo 'Running JMeter performance test...'
                 // NOTE: Remember to update this path to your actual JMeter installation.
-                sh 'JVM_ARGS="--add-opens=java.desktop/sun.awt.X11=ALL-UNNAMED" /path/to/your/apache-jmeter-5.6.3/bin/jmeter.sh -n -t HomePageTest.jmx -l results.jtl'
+                sh 'JVM_ARGS="--add-opens=java.desktop/sun.awt.X11=ALL-UNNAMED" /opt/apache-jmeter-5.6.3/bin/jmeter.sh -n -t HomePageTest.jmx -l results.jtl'
             }
         }
         
@@ -77,3 +77,4 @@ pipeline {
         }
     }
 }
+
